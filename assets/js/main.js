@@ -84,18 +84,25 @@
     geo.top = sTop; geo.H = H;
     svg.setAttribute('viewBox', '0 0 ' + W + ' ' + H);
 
+    // The two lines live only in the left margin (the --thread-w gutter).
+    // They never move toward the text: data-x is ignored, and each data-sep
+    // is squeezed into a small range so the lines only open and close a little.
     var tw = parseFloat(getComputedStyle(story).getPropertyValue('--thread-w')) || 48;
     var gx = tw / 2;
-    var sepScale = W < 700 ? 0.6 : 1;
+    var minS = tw * 0.07, maxS = tw * 0.36;
+    function sepPx(v, quiet) {
+      var t = Math.max(0, Math.min(1, (v + 4) / 44));
+      if (quiet) t = Math.min(t, 0.45);
+      return minS + (maxS - minS) * t;
+    }
 
     var keys = [];
     story.querySelectorAll('[data-sep]').forEach(function (n) {
       if (!visible(n)) return;
-      var xs = W < 700 ? n.getAttribute('data-xm') : n.getAttribute('data-x');
       keys.push({
         y: n.getBoundingClientRect().top + window.scrollY - sTop,
-        x: xs ? parseFloat(xs) * W : gx,
-        sep: parseFloat(n.getAttribute('data-sep')) * sepScale,
+        x: gx,
+        sep: sepPx(parseFloat(n.getAttribute('data-sep')), !!n.closest('.unknown, .foot')),
         op: n.hasAttribute('data-op') ? parseFloat(n.getAttribute('data-op')) : 1
       });
     });
@@ -113,12 +120,11 @@
       t = t * t * (3 - 2 * t);
       return { x: a.x + (b.x - a.x) * t, sep: a.sep + (b.sep - a.sep) * t };
     }
-    var amp = W < 700 ? 2.2 : 3.4;
-    function cl(x) { return Math.max(1.5, Math.min(W - 1.5, x)); }
+    var amp = tw * 0.04;
+    function cl(x) { return Math.max(2, Math.min(tw - 4, x)); }
     function xa(y) { var p = at(y); return cl(p.x - p.sep / 2 + Math.sin(y / 210) * amp); }
     function xb(y) { var p = at(y); return cl(p.x + p.sep / 2 + Math.sin(y / 265 + 1.9) * amp); }
-    function mid(y) { return (xa(y) + xb(y)) / 2; }
-
+    
     var da = '', db = '';
     for (var y = y0; y <= H; y += 12) {
       var c = y === y0 ? 'M' : 'L';
@@ -143,22 +149,6 @@
     });
 
     while (marks.firstChild) marks.removeChild(marks.firstChild);
-
-    function lineCenter(n) {
-      var lh = parseFloat(getComputedStyle(n).lineHeight) || 28;
-      var r = n.getBoundingClientRect();
-      return { y: r.top + window.scrollY - sTop + lh / 2, left: r.left - sLeft };
-    }
-
-    // a small ring on the lines where each question sits
-    story.querySelectorAll('.q-text').forEach(function (q) {
-      if (!visible(q)) return;
-      var p = lineCenter(q);
-      if (p.y < y0) return;
-      var m = mid(p.y);
-      if (m > p.left - 10) return;
-      marks.appendChild(svgEl('circle', { class: 'node', cx: m.toFixed(1), cy: p.y.toFixed(0), r: 3.4 }));
-    });
 
     reveal();
   }

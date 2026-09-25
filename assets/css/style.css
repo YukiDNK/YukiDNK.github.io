@@ -238,7 +238,6 @@ html.past-hero .mark { opacity: 1; transform: none; }
   stroke-linecap: round;
   stroke-linejoin: round;
 }
-.threads .node { fill: var(--paper); stroke: var(--ink-3); stroke-width: 1; }
 
 main, .foot { position: relative; z-index: 1; }
 
