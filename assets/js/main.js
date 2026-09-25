@@ -75,6 +75,192 @@
     svg.appendChild(defs); svg.appendChild(g);
   }
 
+  // smooth curve through (y, x) anchors that never overshoots between two of them
+  // (Fritsch–Carlson monotone cubic), flat at both ends
+  function monotone(anc) {
+    var n = anc.length, dl = [], m = [], j;
+    for (j = 0; j < n - 1; j++) dl.push((anc[j + 1][1] - anc[j][1]) / Math.max(1, anc[j + 1][0] - anc[j][0]));
+    m.push(0);
+    for (j = 1; j < n - 1; j++) m.push(dl[j - 1] * dl[j] <= 0 ? 0 : (dl[j - 1] + dl[j]) / 2);
+    m.push(0);
+    for (j = 0; j < n - 1; j++) {
+      if (dl[j] === 0) { m[j] = 0; m[j + 1] = 0; continue; }
+      var al = m[j] / dl[j], be = m[j + 1] / dl[j], hh = al * al + be * be;
+      if (hh > 9) { var k = 3 / Math.sqrt(hh); m[j] = k * al * dl[j]; m[j + 1] = k * be * dl[j]; }
+    }
+    return function (y) {
+      if (y <= anc[0][0]) return anc[0][1];
+      if (y >= anc[n - 1][0]) return anc[n - 1][1];
+      var i = 0;
+      while (i < n - 2 && y >= anc[i + 1][0]) i++;
+      var h = Math.max(1, anc[i + 1][0] - anc[i][0]), t = (y - anc[i][0]) / h;
+      var t2 = t * t, t3 = t2 * t;
+      return (2 * t3 - 3 * t2 + 1) * anc[i][1] + (t3 - 2 * t2 + t) * h * m[i] +
+             (-2 * t3 + 3 * t2) * anc[i + 1][1] + (t3 - t2) * h * m[i + 1];
+    };
+  }
+
+  /* ---- Section 5: the one place the lines leave the margin ----
+     Between "What I don't know yet" and "Together" the two lines swing out
+     once and pass around the questions, then settle back into the margin.
+     The route is measured from the real text so it never crosses a letter:
+       - with the sticky side headings (wide screens): in through Section 5's
+         empty top padding, then past each question on its open side (right of
+         the left-set ones, left of the indented ones), out through Section 6's
+         top padding. The side headings never sit in those two paddings.
+       - narrow screens: the lines only drift into the empty space to the left
+         of the indented questions.                                        */
+  function planOrbit(sTop, sLeft, W, tw, gx) {
+    var sec = document.getElementById('unknown');
+    var next = document.getElementById('together');
+    if (!sec || !next || !visible(sec)) return null;
+    var sy = window.scrollY;
+    function box(r) { return { t: r.top + sy - sTop, b: r.bottom + sy - sTop, l: r.left - sLeft, r: r.right - sLeft }; }
+
+    // everything in Section 5 the lines must stay clear of: the actual text lines, the ↑ links, the heading
+    var sticky = getComputedStyle(sec.querySelector('.sh') || sec).position === 'sticky';
+    var obs = [];
+    sec.querySelectorAll(sticky ? '.qs p, .qs .back' : '.qs p, .qs .back, .sh').forEach(function (n) {
+      if (!visible(n)) return;
+      var rg = document.createRange();
+      rg.selectNodeContents(n);
+      Array.prototype.forEach.call(rg.getClientRects(), function (r) {
+        if (r.width > 1 && r.height > 1) obs.push(box(r));
+      });
+    });
+    if (!obs.length) return null;
+
+    var secBox = box(sec.getBoundingClientRect());
+    var nextBox = box(next.getBoundingClientRect());
+    var padTop = parseFloat(getComputedStyle(sec).paddingTop) || 0;
+    var padNext = parseFloat(getComputedStyle(next).paddingTop) || 0;
+    var viewR = document.documentElement.clientWidth - sLeft;   // right edge of the page, in story coordinates
+
+
+    var y0, y1;
+    function ease(t) { t = Math.max(0, Math.min(1, t)); return t * t * t * (t * (t * 6 - 15) + 10); }
+
+    if (sticky) {
+      // one pass per question, on the side that is open: the right of the left-set
+      // questions, the empty space to the left of the indented ones
+      var head = sec.querySelector('.sh').getBoundingClientRect();
+      var headR = head.right - sLeft;
+      var sepO = Math.min(tw * 0.5, 26);
+      var clearX = Math.max(52, W * 0.045), clearY = 44;
+      var maxX = viewR - Math.max(24, (viewR - W) * 0.4);
+      var qs = [];
+      sec.querySelectorAll('.qs li').forEach(function (li) {
+        if (!visible(li)) return;
+        var bx = null;
+        obs.forEach(function (o) {
+          var lr = box(li.getBoundingClientRect());
+          if (o.t >= lr.t - 1 && o.b <= lr.b + 1) {
+            bx = bx ? { t: Math.min(bx.t, o.t), b: Math.max(bx.b, o.b), l: Math.min(bx.l, o.l), r: Math.max(bx.r, o.r) } : { t: o.t, b: o.b, l: o.l, r: o.r };
+          }
+        });
+        if (bx) qs.push(bx);
+      });
+      if (qs.length < 2) return null;
+      var lo = headR + clearX + sepO / 2;                   // never near the sticky side heading
+      var pass = [];
+      for (var qi = 0; qi < qs.length; qi++) {
+        var q = qs[qi];
+        var rightC = q.r + clearX + sepO / 2 + (qi % 2 ? 34 : 14);   // a little uneven
+        var leftC = q.l - clearX - sepO / 2;
+        var rightOk = rightC + sepO / 2 <= maxX;
+        var leftOk = leftC >= lo + 24;
+        var wantRight = q.l - lo < W * 0.12;                // left-set question: go round its right
+        if (wantRight && rightOk) pass.push(rightC);
+        else if (!wantRight && leftOk) pass.push(Math.max(lo + 12, leftC - (q.l - lo) * 0.18));
+        else if (rightOk) pass.push(rightC);
+        else if (leftOk) pass.push(leftC);
+        else return null;                                   // no clean route at this width
+      }
+
+      // way in: through Section 5's empty top padding (clear of anything hanging down from Section 4)
+      var above = sec.previousElementSibling;
+      var yA = secBox.t + 10;
+      if (above) {
+        var tw2 = document.createTreeWalker(above, NodeFilter.SHOW_TEXT), tn;
+        while ((tn = tw2.nextNode())) {
+          if (!tn.textContent.trim() || !visible(tn.parentElement)) continue;
+          var rg2 = document.createRange(); rg2.selectNodeContents(tn);
+          Array.prototype.forEach.call(rg2.getClientRects(), function (r) { var bb = box(r); if (bb.b > yA - 30) yA = Math.max(yA, bb.b + 30); });
+        }
+        above.querySelectorAll('.clip').forEach(function (c) { var bb = box(c.getBoundingClientRect()); if (bb.b > yA - 30) yA = Math.max(yA, bb.b + 30); });
+      }
+      var yB = Math.min(secBox.t + padTop - 10, qs[0].t - clearY);
+      // way out: through Section 6's empty top padding
+      var yC = nextBox.t + 10;
+      var yD = nextBox.t + padNext - 24;
+      if (yB - yA < 50 || yD - yC < 60) return null;
+      // centre line: a smooth monotone curve through (y, x) anchors. It never
+      // overshoots between two anchors, so every stretch beside a question stays
+      // on the side that was checked above.
+      var anc = [[yA, gx], [yB, pass[0]]];
+      for (qi = 0; qi < qs.length; qi++) {
+        // drift a little while passing a question, so the curve is uneven rather than a rail
+        var pA = pass[qi], pB = pass[qi] + (pass[qi] > qs[qi].r ? 26 : -Math.min(22, pass[qi] - lo)) * (qi === 0 ? 0.6 : 1);
+        if (qi > 0) anc.push([qs[qi].t - clearY, pA]); else anc[1][1] = pA;
+        anc.push([qs[qi].b + clearY, pB]);
+      }
+      anc.push([yC, lo + 6]);
+      anc.push([yD, gx]);
+      y0 = yA; y1 = yD;
+      var centre = monotone(anc);
+      function spread(y) { return ease(Math.min((y - yA) / (yB - yA), (yD - y) / (yD - yC), 1)); }
+      return {
+        y0: y0, y1: y1,
+        x: function (y, base, side) {
+          if (y <= y0 || y >= y1) return base;
+          var k = spread(y);
+          var cx = centre(y) + Math.sin(y / 310 + (side < 0 ? 0 : 1.7)) * 3 * k;
+          var v = cx + side * (sepO / 2) * k;
+          var w = y < yB ? ease((y - yA) / (yB - yA)) : y > yC ? 1 - ease((y - yC) / (yD - yC)) : 1;
+          return base + (v - base) * w;
+        }
+      };
+    }
+
+    // narrow screens: the side headings sit in the text column, so the lines stay
+    // on the left and only swell into the empty space beside the indented questions
+    var clearL = Math.max(22, W * 0.06), gapY = 36;
+    var sepN = Math.min(tw * 0.7, 22);
+    var rows = [];
+    sec.querySelectorAll('.qs li').forEach(function (li) {
+      if (!visible(li)) return;
+      var lr = box(li.getBoundingClientRect()), bx = null;
+      obs.forEach(function (o) {
+        if (o.t >= lr.t - 1 && o.b <= lr.b + 1) bx = bx ? { t: Math.min(bx.t, o.t), b: Math.max(bx.b, o.b), l: Math.min(bx.l, o.l) } : { t: o.t, b: o.b, l: o.l };
+      });
+      if (bx) rows.push(bx);
+    });
+    if (!rows.length) return null;
+    var ancN = [[rows[0].t - 200, gx]], moved = false;
+    rows.forEach(function (r, i) {
+      var room = r.l - clearL - sepN / 2;
+      var x = room - gx > sepN ? Math.min(room - (i % 2 ? 4 : 10), gx + W * 0.26) : gx;
+      if (x > gx) moved = true;
+      ancN.push([r.t - gapY, x]);
+      ancN.push([r.b + gapY, x > gx ? x - 6 : gx]);
+    });
+    if (!moved) return null;
+    ancN.push([rows[rows.length - 1].b + 220, gx]);
+    var centreN = monotone(ancN);
+    y0 = ancN[0][0]; y1 = ancN[ancN.length - 1][0];
+    return {
+      y0: y0, y1: y1,
+      x: function (y, base, side) {
+        if (y <= y0 || y >= y1) return base;
+        var c = centreN(y);
+        var k = Math.max(0, Math.min(1, (c - gx) / (sepN * 2)));
+        k = k * k * (3 - 2 * k);                            // eases in and out, no corner
+        var target = c + side * sepN / 2 + Math.sin(y / 260 + (side < 0 ? 0 : 1.9)) * 1.5;
+        return base + (target - base) * k;
+      }
+    };
+  }
+
   function layout() {
     var sRect = story.getBoundingClientRect();
     var sTop = sRect.top + window.scrollY;
@@ -122,14 +308,21 @@
     }
     var amp = tw * 0.04;
     function cl(x) { return Math.max(2, Math.min(tw - 4, x)); }
-    function xa(y) { var p = at(y); return cl(p.x - p.sep / 2 + Math.sin(y / 210) * amp); }
-    function xb(y) { var p = at(y); return cl(p.x + p.sep / 2 + Math.sin(y / 265 + 1.9) * amp); }
-    
+    function baseA(y) { var p = at(y); return cl(p.x - p.sep / 2 + Math.sin(y / 210) * amp); }
+    function baseB(y) { var p = at(y); return cl(p.x + p.sep / 2 + Math.sin(y / 265 + 1.9) * amp); }
+
+    var orbit = planOrbit(sTop, sLeft, W, tw, gx);
+    function xa(y) { return orbit ? orbit.x(y, baseA(y), -1) : baseA(y); }
+    function xb(y) { return orbit ? orbit.x(y, baseB(y), 1) : baseB(y); }
+
     var da = '', db = '';
-    for (var y = y0; y <= H; y += 12) {
-      var c = y === y0 ? 'M' : 'L';
+    var y = y0, first = true;
+    while (y <= H) {
+      var c = first ? 'M' : 'L';
+      first = false;
       da += c + xa(y).toFixed(1) + ' ' + y.toFixed(0);
       db += c + xb(y).toFixed(1) + ' ' + y.toFixed(0);
+      y += orbit && y > orbit.y0 - 40 && y < orbit.y1 + 40 ? 3 : 12;
     }
     da += 'L' + xa(H).toFixed(1) + ' ' + H;
     db += 'L' + xb(H).toFixed(1) + ' ' + H;
