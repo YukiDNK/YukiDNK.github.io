@@ -743,7 +743,8 @@ details.more .body {
 .watch a:hover::after { color: var(--line-a); transform: translateX(2px); }
 /* a digit set upright inside a vertical heading */
 .tcy { text-combine-upright: all; -webkit-text-combine: horizontal; }
-.watch-s { color: var(--ink-4); }
+/* several links in one row: space instead of a separator */
+.watch a + a { margin-left: .9rem; }
 
 .yt {
   position: relative;

@@ -176,12 +176,10 @@
   cursor: pointer; list-style: none;
   font-size: .92rem; color: var(--ink-2);
 }
-.g-notes summary span { text-decoration: underline; text-decoration-color: var(--rule); text-decoration-thickness: 1px; text-underline-offset: .35em; }
 .g-notes summary::-webkit-details-marker { display: none; }
 .g-notes summary::before { content: "+"; font-family: var(--mono); color: var(--ink-3); display: inline-block; width: .8em; }
 .g-notes[open] summary::before { content: "\2212"; }
 .g-notes summary:hover { color: var(--ink); }
-.g-notes summary:hover span { text-decoration-color: var(--line-a); }
 .g-notes-body {
   margin-top: 1.4rem;
   padding: .2rem 0 .2rem 1.4rem;
@@ -217,7 +215,7 @@
 <header class="top" id="top">
   <a class="mark" href="index.html">YukiDNK</a>
   <div class="top-r">
-    <a class="home" href="index.html"><span lang="ja">トップページへ</span><span lang="en">Home</span></a>
+    <a class="home" href="index.html"><span lang="ja">ホームへ</span><span lang="en">Home</span></a>
     <div class="lang" role="group" aria-label="Language / 言語">
       <button type="button" data-set-lang="en" aria-pressed="true" lang="en" class="keep">EN</button>
       <button type="button" data-set-lang="ja" aria-pressed="false" lang="ja" class="keep ja">日本語</button>
@@ -264,7 +262,7 @@
       <div class="g-body">
         <h3 class="g-title"><span lang="ja">へっぽこ道場 ～宴まであと五日～</span><span lang="en">Heppoko Dojo: Five Days to the Feast</span></h3>
         <p lang="ja">山奥の道場に「5日後の宴で、すごいものを見せてほしい」という依頼が届きます。それが何なのか分からないまま、3人の弟子と5日間を過ごすゲームです。</p>
-        <p lang="en">A strange request arrives at a mountain dojo: show “something amazing” at a feast in five days. Nobody knows what that means. You spend the five days with three disciples, finding out.</p>
+        <p lang="en">A strange request arrives at a mountain dojo: show “something amazing” at a feast in five days. Nobody knows what that means. You have five days and three disciples to find out.</p>
         <dl class="g-meta">
           <dt><span lang="ja">時間</span><span lang="en">Time</span></dt><dd><span lang="ja">約5〜10分</span><span lang="en">About 5–10 minutes</span></dd>
           <dt><span lang="ja">人数</span><span lang="en">Players</span></dt><dd><span lang="ja">2人1組や少人数のグループで、相談しながら</span><span lang="en">In pairs or small groups, talking each choice through</span></dd>
@@ -274,7 +272,7 @@
         <p class="g-actions"><a class="door" href="https://yukidnk.itch.io/heppoko-dojo" target="_blank" rel="noopener"><span lang="ja">遊んでみる</span><span lang="en">Play</span></a></p>
       </div>
       <details class="g-notes">
-        <summary><span><span lang="ja">制作ノートを読む</span><span lang="en">Read the notes</span></span></summary>
+        <summary><span><span lang="ja">制作メモを読む</span><span lang="en">Read the notes</span></span></summary>
         <div class="g-notes-body">
           <div class="g-note">
             <h4><span lang="ja">生まれたきっかけ</span><span lang="en">Where it came from</span></h4>
@@ -283,18 +281,18 @@
           </div>
           <div class="g-note">
             <h4><span lang="ja">研修での使い方</span><span lang="en">In a workshop</span></h4>
-            <p lang="ja">考え方を説明したあとに、体験として遊んでもらっても、先に遊んでもらってから説明につなげても使えます。遊んだあとは「どうでしたか？」と、ざっくり感想を聞くだけでも、どこまで伝わっているかが見えてきます。</p>
+            <p lang="ja">考え方を説明したあとに体験として遊んでもらっても、先に遊んでもらってから説明につなげても使えます。遊んだあとは「どうでしたか？」と、ざっくり感想を聞くだけでも、どこまで伝わっているかが見えてきます。</p>
             <p lang="en">You can explain the ideas first and let people experience them in the game, or have them play first and lead into the explanation. Afterwards, simply asking “How was it?” is often enough to see how much has landed.</p>
           </div>
           <div class="g-note">
             <h4><span lang="ja">見た目について</span><span lang="en">About the look</span></h4>
-            <p lang="ja">見た目が少し粗いのは意図的です。動くものを早く見せて、反応から学ぶ。そんな感覚を体験しやすくするために、作り込みすぎないようにしています。</p>
-            <p lang="en">It looks a little rough on purpose. Showing something that works early, and learning from the reaction, is easier to feel when things aren't over-polished.</p>
+            <p lang="ja">あえて少し粗い仕上がりにしています。動くものを早く見せて、反応から学ぶ。そんな感覚を体験しやすくするために、作り込みすぎないようにしています。</p>
+            <p lang="en">It's a little rough on purpose. Showing something that works early, and learning from the reaction, is easier to feel when things aren't over-polished.</p>
           </div>
           <div class="g-note">
             <h4><span lang="ja">作り直した話</span><span lang="en">Starting over</span></h4>
-            <p lang="ja">最初の版では、教えたいことを全部入れようとして、両利きの経営の考え方まで盛り込むつもりでした。このままでは遊ぶ人にとって難しくなりすぎると思い、一度捨てて作り直しました。コードを書く前に、チャット上で紙芝居のように遊んでルールを確かめる進め方に変えたことで、小さく試して反応から学ぶという、このゲームのテーマを自分でも体験することになりました。</p>
-            <p lang="en">The first version tried to fit in everything I wanted to teach, even how organizations balance exploring new things with running what already works. It was going to be far too hard to play, so I threw it away and started again. This time, before writing any code, I played the rules through in chat like a paper theatre, and ended up living the game's own theme: try small, and learn from the reaction.</p>
+            <p lang="ja">最初の版では、教えたいことを全部入れようとして、両利きの経営の考え方まで盛り込むつもりでした。このままでは遊ぶ人にとって難しくなりすぎると思い、最初から作り直しました。コードを書く前に、チャット上で紙芝居のように遊んでルールを確かめる進め方に変えたことで、小さく試して反応から学ぶという、このゲームのテーマを自分でも体験することになりました。</p>
+            <p lang="en">The first version tried to fit in everything I wanted to teach, even how organizations balance exploring new things with running what already works. It was going to be far too hard to play, so I started over from scratch. This time, before writing any code, I played the rules through in chat like a paper theatre, and ended up living the game's own theme: try small, and learn from the reaction.</p>
           </div>
         </div>
       </details>
@@ -322,7 +320,7 @@
         <p class="g-actions"><a class="door" href="https://yukidnk.itch.io/coin-collector" target="_blank" rel="noopener"><span lang="ja">遊んでみる</span><span lang="en">Play</span></a></p>
       </div>
       <details class="g-notes">
-        <summary><span><span lang="ja">制作ノートを読む</span><span lang="en">Read the notes</span></span></summary>
+        <summary><span><span lang="ja">制作メモを読む</span><span lang="en">Read the notes</span></span></summary>
         <div class="g-notes-body">
           <div class="g-note">
             <h4><span lang="ja">生まれたきっかけ</span><span lang="en">Where it came from</span></h4>
@@ -341,28 +339,28 @@
               <li>飲み会、仕事、SNS。どの誘いにも価値があり、断っても嫌な感じにはなりません。</li>
               <li>稼ぐ楽しさも否定しません。集めたコインの最高記録が残ります。</li>
               <li>大切な人が誰なのかは決めていません。誰を重ねてもいいように。</li>
-              <li>結末は、責めずに、そっと気づかせる形にしています。</li>
+              <li>結末では、遊び方の良し悪しを決めません。何かに気づいてもらえれば十分だと考えています。</li>
             </ul>
             <ul class="t-list alt" lang="en">
               <li>The people who call out to you are loud, with notification sounds. The person who matters calls just once a season, quietly: “Hey, can we meet now?”</li>
               <li>Drinks, work, social media: each has its value, and saying no is never made to feel bad.</li>
               <li>The fun of earning isn't dismissed. Your best coin record is kept.</li>
               <li>Who that person is, is never said, so you can see anyone in them.</li>
-              <li>The ending never blames you. It only lets you notice.</li>
+              <li>The ending doesn't judge how you played. It's enough if you notice something.</li>
             </ul>
           </div>
           <div class="g-note">
             <h4><span lang="ja">途中で変えたこと</span><span lang="en">What changed along the way</span></h4>
             <ul class="t-list g-changed" lang="ja">
-              <li><b>最初は、大切な人がだんだん離れて、最後にはいなくなる形にしていました。</b><span class="to">罰で気づかせることになるのでやめて、寂しそうになるだけにしました。</span></li>
+              <li><b>最初は、大切な人がだんだん離れて、最後にはいなくなる形にしていました。</b><span class="to">正解と不正解があるように見えてしまうのでやめて、寂しそうになるだけにしました。</span></li>
               <li><b>最初は、関係の深さをバーで見せていました。</b><span class="to">数字で見えると「気づいたときにはもう遅い」が成り立たないのでやめて、表情と色だけで伝えることにしました。</span></li>
-              <li><b>最初は、恋愛の誘いも入れていました。</b><span class="to">大切な人が恋人に見えてしまうのでやめました。</span></li>
+              <li><b>最初は、恋愛の誘いも入れていました。</b><span class="to">浮気にしか見えないのでやめました。</span></li>
               <li><b>最初は、エンディングで本当のタイトルを明かすつもりでした。</b><span class="to">テーマを言葉にしてしまうのでやめました。</span></li>
             </ul>
             <ul class="t-list g-changed" lang="en">
-              <li><b>At first, the person slowly drifted away and finally left.</b><span class="to">That meant using punishment to make the point, so now they only look lonely.</span></li>
+              <li><b>At first, the person slowly drifted away and finally left.</b><span class="to">That made it look as if there were right and wrong ways to play, so now they only look lonely.</span></li>
               <li><b>At first, a bar showed how close you were.</b><span class="to">If you can see it as a number, “by the time you notice, it's too late” no longer works, so it's shown only through face and colour.</span></li>
-              <li><b>At first, there were romantic invitations too.</b><span class="to">They made the person at the bench look like a partner, so I took them out.</span></li>
+              <li><b>At first, there were romantic invitations too.</b><span class="to">They could only look like cheating, so I took them out.</span></li>
               <li><b>At first, the ending was going to reveal a “real” title.</b><span class="to">That would have spelled out the theme, so I dropped it.</span></li>
             </ul>
           </div>
@@ -378,7 +376,7 @@
 
 <footer class="foot">
   <ul class="within" aria-label="YukiDNK">
-    <li><a href="index.html"><span lang="ja">トップページ</span><span lang="en">Home</span></a></li>
+    <li><a href="index.html"><span lang="ja">ホーム</span><span lang="en">Home</span></a></li>
     <li><a href="training.html"><span lang="ja">アジャイル研修</span><span lang="en">Agile training <small>(in Japanese)</small></span></a></li>
     <li><a href="games.html" aria-current="page"><span lang="ja">ゲーム制作</span><span lang="en">Game making</span></a></li>
   </ul>
