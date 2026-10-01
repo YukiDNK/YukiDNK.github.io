@@ -893,6 +893,7 @@ html[lang="en"] .qs p { line-height: 1.3; letter-spacing: -.01em; }
 }
 .li { margin-top: 3.5rem; font-size: .88rem; color: var(--ink-2); }
 .li a { text-underline-offset: .3em; text-decoration-thickness: 1px; }
+.li + .li { margin-top: .5rem; }
 
 /* ---------- footer ---------- */
 
