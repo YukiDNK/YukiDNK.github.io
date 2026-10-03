@@ -181,24 +181,31 @@
 .g-actions { display: flex; flex-wrap: wrap; align-items: center; gap: .8rem 1.4rem; margin-top: .2rem; }
 .g-actions .door { font-size: 1.02rem; padding: .55em 1.3em .6em; }
 
-/* the notes open under the row, across its full width */
+/* the notes sit under the row, across its full width: the beginning shows, the rest folds */
 .g-notes { grid-column: 1 / -1; }
-.g-notes summary {
-  display: inline-flex; align-items: baseline; gap: .5rem;
-  cursor: pointer; list-style: none;
-  font-size: .92rem; color: var(--ink-2);
-}
-.g-notes summary::-webkit-details-marker { display: none; }
-.g-notes summary::before { content: "+"; font-family: var(--mono); color: var(--ink-3); display: inline-block; width: .8em; }
-.g-notes[open] summary::before { content: "\2212"; }
-.g-notes summary:hover { color: var(--ink); }
+.g-notes-label { font-family: var(--serif); font-weight: 600; font-size: .92rem; letter-spacing: .08em; color: var(--ink-2); }
 .g-notes-body {
-  margin-top: 1.4rem;
+  margin-top: .9rem;
   padding: .2rem 0 .2rem 1.4rem;
   border-left: 1px solid var(--rule);
   display: flex; flex-direction: column; gap: 1.8rem;
   max-width: calc(15rem + 2.2rem + var(--measure));
 }
+.g-more { margin-top: -.6rem; }
+.g-more summary {
+  display: inline-flex; align-items: baseline; gap: .5rem;
+  cursor: pointer; list-style: none;
+  font-size: .92rem; color: var(--ink);
+}
+.g-more summary::-webkit-details-marker { display: none; }
+.g-more summary::before { content: "+"; font-family: var(--mono); color: var(--ink-3); display: inline-block; width: .8em; }
+.g-more[open] summary::before { content: "\2212"; }
+.g-more[open] summary { color: var(--ink-3); }
+.g-more summary:hover { color: var(--ink); }
+.g-more:not([open]) .when-open, .g-more[open] .when-closed { display: none; }
+.g-note-out { font-size: .88rem; color: var(--ink-2); }
+.g-note-out a { text-underline-offset: .3em; text-decoration-thickness: 1px; }
+.g-more-body { margin-top: 1.6rem; display: flex; flex-direction: column; gap: 1.8rem; }
 .g-note h4 { font-family: var(--serif); font-weight: 600; font-size: 1.05rem; margin: 0 0 .55rem; }
 .g-note > * + * { margin-top: .7rem; }
 .g-changed li b { font-weight: 500; }
@@ -222,9 +229,9 @@
 }
 </style>
 </head>
-<body class="sub">
+<body class="sub" id="top">
 
-<header class="top" id="top">
+<header class="top">
   <a class="mark" href="index.html">YukiDNK</a>
   <div class="top-r">
     <a class="home" href="index.html"><span lang="ja">ホームへ</span><span lang="en">Home</span></a>
@@ -283,13 +290,18 @@
         </dl>
         <p class="g-actions"><a class="door" href="https://yukidnk.itch.io/heppoko-dojo" target="_blank" rel="noopener"><span lang="ja">遊んでみる</span><span lang="en">Play</span></a></p>
       </div>
-      <details class="g-notes">
-        <summary><span><span lang="ja">制作メモを読む</span><span lang="en">Read the notes</span></span></summary>
+      <div class="g-notes">
+        <p class="g-notes-label"><span lang="ja">制作メモ</span><span lang="en">My notes</span></p>
         <div class="g-notes-body">
           <div class="g-note">
             <h4><span lang="ja">生まれたきっかけ</span><span lang="en">How it started</span></h4>
             <p lang="ja">企業向けのアジャイル研修はワークショップを中心に行ってきました。ただ、「アジャイルの本質とは何か」といったパートになると、どうしても座学っぽくなってしまいます。そこをゲームの体験に置き換えられないかと、実験してみました。</p>
             <p lang="en">My Agile training for companies has mostly been built around workshops. But parts like “what is Agile really about?” tend to turn into lectures. I wanted to see whether a game could replace those parts.</p>
+          </div>
+          <details class="g-more">
+            <summary><span class="when-closed"><span lang="ja">続きを読む</span><span lang="en">Read more</span></span><span class="when-open"><span lang="ja">閉じる</span><span lang="en">Close</span></span></summary>
+            <div class="g-more-body">
+          <div class="g-note">
             <p lang="ja">ちなみに、体験してほしいのは次の3つです。</p>
             <ul class="t-list alt" lang="ja">
               <li>ぐるぐると、ちょっとずつ進める</li>
@@ -318,8 +330,11 @@
             <p lang="ja">最初の版では、教えたいことを全部入れようとして、両利きの経営の考え方まで盛り込むつもりでした。このままでは遊ぶ人にとって難しくなりすぎると思い、最初から作り直すことに。今度はコードを書く前に、AIとのチャットで文章だけのゲームとして遊び、ルールを確かめながら作ることにしました。意図したわけではありませんが、小さく試して反応から学ぶというこのゲームのテーマを、自分でも実践していたことになります。</p>
             <p lang="en">The first version tried to fit in everything I wanted to teach, even organizational ambidexterity. It was going to be far too hard to play, so I started over from scratch. This time, before writing any code, I played it as a text-only game in a chat with AI, checking the rules as I went. I hadn't planned it, but I was living the game's own theme: try small, and learn from the reaction.</p>
           </div>
+          <p class="g-note-out"><span lang="ja">ゲームづくりの舞台裏は<a href="https://note.com/yukidnk/n/n7bda93e45d8b" target="_blank" rel="noopener">note</a>に書いています。</span><span lang="en">I wrote about how I made it on <a href="https://note.com/yukidnk/n/n7bda93e45d8b" target="_blank" rel="noopener">my Japanese blog</a>.</span></p>
+            </div>
+          </details>
         </div>
-      </details>
+      </div>
     </article>
     </div>
   </div>
@@ -343,14 +358,17 @@
         </dl>
         <p class="g-actions"><a class="door" href="https://yukidnk.itch.io/coin-collector" target="_blank" rel="noopener"><span lang="ja">遊んでみる</span><span lang="en">Play</span></a></p>
       </div>
-      <details class="g-notes">
-        <summary><span><span lang="ja">制作メモを読む</span><span lang="en">Read the notes</span></span></summary>
+      <div class="g-notes">
+        <p class="g-notes-label"><span lang="ja">制作メモ</span><span lang="en">My notes</span></p>
         <div class="g-notes-body">
           <div class="g-note">
             <h4><span lang="ja">生まれたきっかけ</span><span lang="en">How it started</span></h4>
             <p lang="ja">ライフコーチングでクライアントと話していると、目の前のことを一生懸命がんばるうちに、大切な人と過ごす時間が気づかないうちに少しずつ減っていた、という話によく出会います。それを言葉で伝えるのではなく、遊びの中で自分で気づけないか。それがこのゲームの始まりです。</p>
             <p lang="en">In coaching sessions, I often hear clients say that while working hard on what was in front of them, they had slowly, without noticing, spent less and less time with the people who matter most. I wondered if people could notice this for themselves through play, instead of being told. That is how this game began.</p>
           </div>
+          <details class="g-more">
+            <summary><span class="when-closed"><span lang="ja">続きを読む</span><span lang="en">Read more</span></span><span class="when-open"><span lang="ja">閉じる</span><span lang="en">Close</span></span></summary>
+            <div class="g-more-body">
           <div class="g-note">
             <h4><span lang="ja">隠されたテーマ</span><span lang="en">The hidden theme</span></h4>
             <p lang="ja">「幸せは、遠くではなく、すぐ近くにある」。これが、このゲームの隠されたテーマです。ゲームの中には、このテーマも「幸せはすぐ隣に」という名前も出てきません。題名は「コインあつめ」、説明は「コインをたくさん集めよう」だけです。エンディングで本当の題名を明かす案もありましたが、テーマを言葉にしてしまうのでやめました。</p>
@@ -387,8 +405,11 @@
             <p lang="ja">何かを選べばほかの何かは選べません。仕事も付き合いもSNSもそれぞれに価値があります。ふとだれかの顔が浮かんだら、久しぶりに連絡してみてください。</p>
             <p lang="en">Choosing one thing means not choosing another. Work, friends, and social media all have their value. If someone comes to mind, why not get in touch? It may have been a while.</p>
           </div>
+          <p class="g-note-out"><span lang="ja">ゲームづくりの舞台裏は<a href="https://note.com/yukidnk/n/na8d038070e01" target="_blank" rel="noopener">note</a>に書いています。</span><span lang="en">I wrote about how I made it on <a href="https://note.com/yukidnk/n/na8d038070e01" target="_blank" rel="noopener">my Japanese blog</a>.</span></p>
+            </div>
+          </details>
         </div>
-      </details>
+      </div>
     </article>
     <article class="g-game" id="everyones-hero">
       <figure class="g-cover"><img src="assets/img/games/everyones-hero-cover.jpg" alt="" data-alt-ja="みんなの勇者 のカバー画像" data-alt-en="Cover of Everyone’s Hero" loading="lazy"></figure>
@@ -404,14 +425,17 @@
         </dl>
         <p class="g-actions"><a class="door" href="https://yukidnk.itch.io/everyones-hero" target="_blank" rel="noopener"><span lang="ja">遊んでみる</span><span lang="en">Play</span></a></p>
       </div>
-      <details class="g-notes">
-        <summary><span><span lang="ja">制作メモを読む</span><span lang="en">Read the notes</span></span></summary>
+      <div class="g-notes">
+        <p class="g-notes-label"><span lang="ja">制作メモ</span><span lang="en">My notes</span></p>
         <div class="g-notes-body">
           <div class="g-note">
             <h4><span lang="ja">生まれたきっかけ</span><span lang="en">How it started</span></h4>
             <p lang="ja">コーチングの中でクライアントが「なぜそうしたいのか」を深く掘っていくと、自分の考えだと思っていたことが、じつはだれかから借りた思いこみだったと気づく瞬間があります。だれの考えか分からない「みんな」からの期待に、遊びながら気づけないか。それがこのゲームの始まりです。</p>
             <p lang="en">In coaching, as a client digs deeper into why they want something, there is sometimes a moment when they see that a belief they thought was their own was borrowed from someone else. I wondered if a game could help you notice the pull of “everyone” — expectations that don’t clearly belong to anyone. That is how this game began.</p>
           </div>
+          <details class="g-more">
+            <summary><span class="when-closed"><span lang="ja">続きを読む</span><span lang="en">Read more</span></span><span class="when-open"><span lang="ja">閉じる</span><span lang="en">Close</span></span></summary>
+            <div class="g-more-body">
           <div class="g-note">
             <h4><span lang="ja">隠されたテーマ</span><span lang="en">The hidden theme</span></h4>
             <p lang="ja">「全部持たなくていい。手放すと、だれかのところへ巡っていく」。そして、その手前にある「自分に合うものを選べばいい」。これが、このゲームの隠されたテーマです。伝説のつるぎやよろいは、いかにも勇者らしい装備ですが、主人公に合うとはかぎりません。「勇者ならこうするはず」とまねをして合わない物まで持つと、体が重くなって思うように進めなくなります。「手放す」「身軽」のような答えになる言葉は、題名にもゲームの中にも入れていません。「みんなの勇者」という題名は、遊ぶ前は明るく聞こえ、遊んだあとは、みんなの期待を背負わされた勇者の話として少しちがって聞こえるように選びました。</p>
@@ -448,8 +472,10 @@
             <p lang="ja">かかえている荷物はどこから来たのか、何のために持っているのか。ゆっくり眺めてみてください。</p>
             <p lang="en">Where did the things you carry come from, and what are you carrying them for? Take your time and have a look.</p>
           </div>
+            </div>
+          </details>
         </div>
-      </details>
+      </div>
     </article>
     </div>
     <p class="t-back"><a class="back" href="#top"><span aria-hidden="true">↑</span><span class="vh"><span lang="ja">このページのトップへ</span><span lang="en">Back to top</span></span></a></p>
