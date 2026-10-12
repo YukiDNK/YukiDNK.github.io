@@ -466,8 +466,8 @@ html[lang="en"] .ph figcaption { line-height: 1.5; }
 .ph--2012 img { object-position: 50% 40%; }              /* the two of us, the shop around */
 .ph--2019 img {                                          /* me, the board, the room; no monitor */
   object-position: 100% 45%;
-  transform: scale(1.12);
-  transform-origin: 100% 45%;
+  transform: scale(1.25);
+  transform-origin: 100% 100%;
 }
 .ph--2025 img { object-position: 50% 50%; }
 .ph--2020 img { object-position: 57% 55%; }              /* the group of friends, not the corner */
