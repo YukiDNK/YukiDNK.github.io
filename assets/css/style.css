@@ -12,7 +12,7 @@
   --ink-4:   #A3AAA4;
   --rule:    #C8CEC5;
   --line-a:  #5F8159;   /* moss  */
-  --line-b:  #7082AA;   /* slate */
+  --line-b:  #3F6C93;   /* deep blue (same as --focus) */
   --focus:   #3F6C93;
 
   --thread-w: 56px;
@@ -38,7 +38,7 @@
     --ink-4:   #56605A;
     --rule:    #2C332F;
     --line-a:  #8DAE85;
-    --line-b:  #97A6CC;
+    --line-b:  #9DBEDD;
     --focus:   #9DBEDD;
     color-scheme: dark;
   }
@@ -52,7 +52,7 @@
   --ink-4:   #56605A;
   --rule:    #2C332F;
   --line-a:  #8DAE85;
-  --line-b:  #97A6CC;
+  --line-b:  #9DBEDD;
   --focus:   #9DBEDD;
   color-scheme: dark;
 }
